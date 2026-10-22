@@ -1,0 +1,12 @@
+###
+POST http://127.0.0.1:8000/login
+Content-Type: application/json
+
+{
+    "email": "123@qq.com",
+    "password": "1111333"
+}
+
+###
+GET http://127.0.0.1:8000/user/list?page=2&size=20
+Content-Type: application/json
