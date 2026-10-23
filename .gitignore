@@ -1,9 +1,7 @@
-# ---------- 敏感信息（绝对不能提交） ----------
 .env
 .env.*
 !.env.example
 
-# ---------- Python ----------
 __pycache__/
 *.py[cod]
 *$py.class
@@ -12,19 +10,16 @@ __pycache__/
 venv/
 env/
 
-# ---------- 数据库 ----------
 *.db
 *.sqlite
 *.sqlite3
 
-# ---------- 测试 / 构建产物 ----------
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 dist/
 build/
 
-# ---------- 编辑器 / 系统 ----------
 .idea/
 .DS_Store
 Thumbs.db
