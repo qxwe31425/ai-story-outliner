@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     DATABASE_URL: str
     ALLOWED_ORIGINS: Annotated[List[str], NoDecode] = []
+    DEEPSEEK_API_BASE: str
     DEEPSEEK_API_KEY: str
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
