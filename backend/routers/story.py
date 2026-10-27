@@ -1,6 +1,7 @@
 import uuid
 from typing import Optional
 from datetime import datetime
+from core.timeutil import now_beijing
 from fastapi import APIRouter, Depends, HTTPException, Cookie, Response, BackgroundTasks
 from sqlalchemy.orm import Session
 
@@ -62,14 +63,14 @@ def generate_story_task(job_id: str, theme: str, session_id: str):
         try:
             job.status = "processing"
             db.commit()
-            story =  StoryGenerator().generate_story(theme)
+            story =  StoryGenerator().generate_story(db, session_id, theme)
             job.story_id = story.id
             job.status = "completed"
-            job.completed_at = datetime.now()
+            job.completed_at = now_beijing()
             db.commit()
         except Exception as e:
             job.status = "failed"
-            job.completed_at = datetime.now()
+            job.completed_at = now_beijing()
             job.error = str(e)
             db.commit()
     finally:
@@ -86,5 +87,28 @@ async def get_complete_story(story_id: int, db: Session = Depends(get_db)):
 
 
 def build_complete_story_tree(db: Session, story: Story) -> CompleteStoryResponse:
-    pass
+    nodes = db.query(StoryNode).filter(StoryNode.story_id == story.id).all()
+    node_dict = {}
+    for node in nodes:
+        node_response = CompleteStoryNodeResponse(
+            id=node.id,
+            content=node.content,
+            is_ending=node.is_ending,
+            is_winning_ending=node.is_winning_ending,
+            options=node.options
+        )
+        node_dict[node.id] = node_response
+    
+    root_node = next((node for node in nodes if node.is_root), None)
+    if not root_node:
+        raise HTTPException(status_code=404, detail="Root node not found")
+    
+    return CompleteStoryResponse(
+        id=story.id,
+        title=story.title,
+        session_id=story.session_id,
+        created_at=story.created_at,
+        root_node=node_dict[root_node.id],
+        all_nodes=node_dict
+    )
 

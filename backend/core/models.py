@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class StoryOptionLLM(BaseModel):
     text: str = Field(description="The text of the option")
-    nextNode: [Dict[str, Any]] = Field(description="The next node content and its options")
+    nextNode: Dict[str, Any] = Field(description="The next node content and its options")
 
 class StoryNodeLLM(BaseModel):
     content: str = Field(description="The main content of the story node")
